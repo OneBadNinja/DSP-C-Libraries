@@ -4,12 +4,6 @@
 #include <string.h>
 #include <math.h>
 
-/* Supports argument parsing for key-value pairs in the form of [-param val] or non-value parameters (ie -T)
- argv - pointer to an array of strings which is traversed
- argend - pointer to a termination string
- key - character pointer to store the key
- value - string pointer to store the corresponding value.
- */
 int argParse(char *** argv, char ** argend, char * key, char ** value) {
     if(*argv <= argend) {
         /* Default empty value (no key-value) */
@@ -38,9 +32,6 @@ void argCheck(char * value, char key) {
     }
 }
 
-/*
- * Checks whether a string is entirely numeric, returning a boolean value. *val is populated by the numeric value.
- */
 int is_num(char * str, float * val) {
     char * cont;
     *val = strtod(str, &cont);

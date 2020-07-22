@@ -1,4 +1,4 @@
-#include "gen.h"
+#include "sweep.h"
 #include <math.h>
 #include <stdlib.h>
 

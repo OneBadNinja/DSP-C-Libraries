@@ -1,11 +1,35 @@
 #include "gtable.h"
 #include <math.h>
 #include <stdio.h>
-/* Static functions MUST have both declarations/prototypes and implementations with the same file. */
+
+/*
+ Static functions can only be seen in their own source/object files.
+ "A static function in C is a function that has a scope that is limited to its object file. This means that the static function is only visible in its object file."
+ https://www.tutorialspoint.com/static-functions-in-c
+ Static functions MUST have both declarations/prototypes and implementations with the same file.
+ */
+
+/**
+ * Normalises a table by its maximum amplitude
+ * @param table - pointer to a GTABLE object
+ */
 static void normtable(GTABLE * table);
+
+/**
+ * Creates and initialises a lookup table with a guard point
+ * @param length - the size of the table
+ * @return Pointer to a GTABLE object allocated on the heap
+*/
 static GTABLE * newtable(unsigned long length);
 
-/* Creates and initialises a lookup table with a guard point */
+/**
+ * Allocates memory for an initialised GTABLE and populates it with zeros for a given length. Includes a guard point.
+ *  @param table - The initialised table
+ *  @param length - The size of the table
+ *  @return boolean integer whether population is successful or not.
+*/
+static int filltable(GTABLE * table, unsigned long length);
+
 static GTABLE * newtable(unsigned long length) {
     unsigned long i;
     GTABLE * table = NULL;
@@ -50,13 +74,6 @@ int filltable(GTABLE * table, unsigned long length) {
     return 1;
 }
 
-
-
-/*
- Static functions can only be seen in their own source/object files.
- "A static function in C is a function that has a scope that is limited to its object file. This means that the static function is only visible in its object file."
- https://www.tutorialspoint.com/static-functions-in-c
- */
 static void normtable(GTABLE * table) {
     double maxamp = 0.0, amp;
     unsigned long i;
@@ -230,12 +247,6 @@ GTABLE * pulsetable(unsigned long length, unsigned long nharms) {
     return ptab;
 }
 
-/*
- This initialises and returns a table oscillator, it contains a waveform table supplied upon
- initialisation, and an osc object/typedef struct from wave.h which is populated from the
- table.
- It is universal for any type of waveform.
- */
 TOSCIL * oscil_t(double fs, double phase, GTABLE * gtable) {
     /* Comprised of a lookup table and an oscillator object. */
     TOSCIL * oscil;
@@ -275,9 +286,6 @@ TOSCIL * oscil_t(double fs, double phase, GTABLE * gtable) {
     return oscil;
 }
 
-/*
- Performs a truncated lookup on a table oscillator
- */
 double tabtick(TOSCIL * oscil, double freq) {
     /* Truncate phase index - equivalent to floor() in the positive direction
      for negative numbers
@@ -291,8 +299,9 @@ double tabtick(TOSCIL * oscil, double freq) {
     /* Update frequency */
     if(oscil->osc.curFreq != freq) {
         /* Lowest frequency for increment at fundamental frequency resolution is obtained
-         from the index increment TABLEN * freq/fs = TABLEN / length hence f0 = fs / length
-         which is the same as FFT resolution (fs/NFFT)*/
+         from the unit index increment TABLEN * freq/fs =  1 hence f0 = fs / length
+         which is the same as FFT resolution (fs/NFFT)
+         */
         oscil->osc.curFreq = freq;
         /* Update the sample_increment */
         oscil->osc.incr = oscil->sizeovrsr * oscil->osc.curFreq;
@@ -317,9 +326,6 @@ double tabtick(TOSCIL * oscil, double freq) {
     return oscil->table->samples[idx];
 }
 
-/*
- Performs an interpolated lookup on a table oscillator
- */
 double tabitick(TOSCIL * oscil, double freq) {
     /* Retrieve the current index (truncated) - floor for positive, ceil for negative (latter
      not applicable here since we wrap between 0 < x < 2pi) */

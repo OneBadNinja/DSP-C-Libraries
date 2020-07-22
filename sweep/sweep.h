@@ -1,5 +1,5 @@
-#ifndef _GEN_H_
-#define _GEN_H_
+#ifndef SWEEP_H
+#define SWEEP_H
 #include <math.h>
 
 typedef struct logSweep {
@@ -11,4 +11,4 @@ typedef struct logSweep {
 ESS * newSweep(double T, double fs, double startFreq, double endFreq);
 void clearSweep(ESS ** sweep);
 
-#endif _GEN_H_
+#endif

@@ -17,10 +17,7 @@ OSCIL * oscil( double fs, double phase) {
     return osc;
 }
 
-/* No error checking conducted on the input pointer for reasons of efficiency,
-since the function is to be called very frequently. */
 double sinetick(OSCIL * oscil, double freq) {
-    /* */
     double val = sin(oscil->curPhase);
     // Update oscil object.
     if(freq != oscil->curFreq) {
